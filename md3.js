@@ -1,6 +1,12 @@
 /* global BigInt */
 const crypto = require('crypto');
 
+// Generates a MD5 hash for a given string
+const generateMD5 = msg => crypto
+  .createHash('md5')
+  .update(msg, 'utf8')
+  .digest('hex');
+
 // Generates the public and private RSA keys
 const generateRSAKeys = (primeOne = 197, primeTwo = 199) => {
   const p = primeOne;
@@ -35,15 +41,11 @@ const RSATransform = (msg, key) => {
 };
 
 // Creates a message by converting the message text
-// and the MD5 hash to an array of ASCII codes
+// and a generated MD5 hash to an array of ASCII codes
 // The MD5 hash is encrypted using RSA and the provided key
 const createMessage = (msg, key) => {
   const message = [];
-
-  const hash = crypto
-    .createHash('md5')
-    .update(msg, 'utf8')
-    .digest('hex');
+  const hash = generateMD5(msg);
 
   // Splits a word in to characters and for each character converts it to the ASCI code
   // and saves it as an entry in an array
@@ -70,7 +72,7 @@ const parseMessage = (msg, key) => {
   const msgCodes = msg.slice(0, msg.length - hashCodes.length);
 
   // For each ASCI code Converts it to the corresponding character
-  // and appends it to a string
+  // and appends it to a message string
   msgCodes.forEach(code => {
     message += String.fromCharCode(code);
   });
@@ -80,16 +82,13 @@ const parseMessage = (msg, key) => {
     hash += String.fromCharCode(RSATransform(code, key));
   });
 
-  // Checks if the received message generates the same MD5 hash as the received one
-  const MD5Hash = crypto
-    .createHash('md5')
-    .update(message, 'utf8')
-    .digest('hex');
+  // Checks if the received message generates the same MD5 hash
+  const genHash = generateMD5(message);
   try {
-    if (MD5Hash !== hash) {
+    if (genHash !== hash) {
       const error = {
         'Error message': 'received incorrect message - the generated MD5 hash does not match the received one',
-        'Received Hash': MD5Hash,
+        'Received Hash': genHash,
         'Generated Hash': hash,
       };
       throw error;
@@ -98,7 +97,7 @@ const parseMessage = (msg, key) => {
     console.log('Error receiving the message', error);
   }
 
-  return { message, hash: MD5Hash };
+  return { message, hash: genHash };
 };
 
 // Message to send
