@@ -10,7 +10,7 @@ const generateRSAKeys = (primeOne = 197, primeTwo = 199) => {
   let e = 3;
   let d = 0;
 
-  // Check if e is not a factor of phi and increment it otherwise
+  // Check if e is a factor of phi and increment it otherwise
   while (phi % e === 0) {
     e += 1;
   }
@@ -20,10 +20,7 @@ const generateRSAKeys = (primeOne = 197, primeTwo = 199) => {
     d += e;
   }
 
-  const publicKey = { e, n };
-  const privateKey = { d, n };
-
-  return { publicKey, privateKey };
+  return { publicKey: { e, n }, privateKey: { d, n } };
 };
 
 // Encrypts/Decrypts a message based on the RSA key provided
