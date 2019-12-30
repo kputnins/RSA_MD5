@@ -89,7 +89,7 @@ const parseMessage = (msg, key) => {
     if (MD5Hash !== hash) {
       const error = {
         'Error message': 'received incorrect message - the generated MD5 hash does not match the received one',
-        'received Hash': MD5Hash,
+        'Received Hash': MD5Hash,
         'Generated Hash': hash,
       };
       throw error;
@@ -112,7 +112,7 @@ const { publicKey, privateKey } = generateRSAKeys();
 const sentMessage = createMessage(message, publicKey);
 const receivedMessage = parseMessage(sentMessage.msg, privateKey);
 console.log('Sent message:     ', { message, hash: sentMessage.hash });
-console.log('received message: ', receivedMessage);
+console.log('Received message: ', receivedMessage);
 console.log();
 
 // If message gets changed scenario
@@ -120,4 +120,4 @@ const sentMessage2 = createMessage(message, publicKey);
 sentMessage2.msg[1] = 70;
 const receivedMessage2 = parseMessage(sentMessage2.msg, privateKey);
 console.log('Sent message:     ', { message, hash: sentMessage2.hash });
-console.log('received message: ', receivedMessage2);
+console.log('Received message: ', receivedMessage2);
